@@ -17,10 +17,9 @@ const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 // Parse application/json
 app.use(bodyParser.json());
-// Rutas de /usuario
-app.use(require('./routes/usuario'));
 
-
+// Configuración global de rutas
+app.use(require('./routes/index'));
 
 // Conexion con la DBA
 mongoose.connect(process.env.URLDB, { useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true }, (err, res) => {

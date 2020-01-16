@@ -4,11 +4,13 @@
 const express = require('express');
 const Usuario = require('../models/usuario');
 const _ = require('underscore');
+const bcryptjs = require('bcryptjs');
+const { verificaToken, verificaAdmin_Role } = require('../middlewares/autenticacion');
 
 const app = express();
 
 // Consultar o listar
-app.get('/usuario', (req, res) => {
+app.get('/usuario', verificaToken, (req, res) => {
     let desde = req.query.desde || 0;
     desde = Number(desde);
 
@@ -39,13 +41,13 @@ app.get('/usuario', (req, res) => {
 });
 
 // Crear o registrar
-app.post('/usuario', (req, res) => {
+app.post('/usuario', [verificaToken, verificaAdmin_Role], (req, res) => {
     let body = req.body;
 
     let usuario = new Usuario({
         nombre: body.nombre,
         email: body.email,
-        password: body.password,
+        password: bcryptjs.hashSync(body.password, 10),
         role: body.role
     });
 
@@ -65,7 +67,7 @@ app.post('/usuario', (req, res) => {
 });
 
 // Editar o actualizar
-app.put('/usuario/:id', (req, res) => {
+app.put('/usuario/:id', [verificaToken, verificaAdmin_Role], (req, res) => {
     let id = req.params.id || null;
     let body = _.pick(req.body, ['nombre', 'email', 'img', 'role', 'estado']); // Filtrar que campos se pueden modificar
 
@@ -86,7 +88,7 @@ app.put('/usuario/:id', (req, res) => {
 });
 
 // Eliminar
-app.delete('/usuario/:id', (req, res) => {
+app.delete('/usuario/:id', [verificaToken, verificaAdmin_Role], (req, res) => {
     let id = req.params.id;
     let cambiaEstado = { estado: false }
         // Usuario.findByIdAndRemove(id, (err, usuarioBorrado) => {
