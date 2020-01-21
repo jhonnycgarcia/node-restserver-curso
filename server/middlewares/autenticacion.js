@@ -23,6 +23,25 @@ let verificaToken = (req, res, next) => {
     });
 };
 
+// Verificar el TOKEN para imagen
+let verificaTokenImg = (req, res, next) => {
+    let token = req.query.token;
+    // Verificar el token
+    jwt.verify(token, process.env.SEED, (err, tokenDecoded) => {
+        if (err) {
+            return res.status(401).json({
+                ok: false,
+                err: {
+                    message: 'Token no válido'
+                }
+            });
+        }
+
+        req.usuario = tokenDecoded.usuario;
+        next();
+    });
+};
+
 // Verifica ADMIN_ROLE
 let verificaAdmin_Role = (req, res, next) => {
     let usuario = req.usuario;
@@ -37,10 +56,11 @@ let verificaAdmin_Role = (req, res, next) => {
             }
         });
     }
-}
+};
 
 // Exportar
 module.exports = {
     verificaToken,
+    verificaTokenImg,
     verificaAdmin_Role
 }

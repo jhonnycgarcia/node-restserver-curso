@@ -12,5 +12,9 @@ app.use(require('./login'));
 app.use(require('./categoria'));
 // Rutas de /producto
 app.use(require('./producto'));
+// Rutas de /upload
+app.use(require('./upload'));
+// Rutas de /imagenes
+app.use(require('./imagenes'));
 
 module.exports = app;
